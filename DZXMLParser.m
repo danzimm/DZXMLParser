@@ -1,20 +1,19 @@
 //
-//  OSXMLParser.m
-//  Sector
+//  DZXMLParser.m
 //
 //  Created by Dan Zimmerman on 11/9/11.
-//  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2011 Dan Zimmerman. All rights reserved.
 //
 
-#import "OSXMLParser.h"
+#import "DZXMLParser.h"
 
-@interface OSXMLParser (private)
+@interface DZXMLParser (private)
 - (BOOL)_checkElementListAgainstDeniedList;
 @end
 
-@implementation OSXMLParser
+@implementation DZXMLParser
 
-- (id)initWithData:(NSData *)data delegate:(id<OSXMLParserDelegate>)delegate
+- (id)initWithData:(NSData *)data delegate:(id<DZXMLParserDelegate>)delegate
 {
 	if ((self = [super init]) != nil) {
 		_data = [[NSData alloc] initWithData:data];
@@ -27,6 +26,17 @@
 		_bufferData = [[NSMutableString alloc] init];
 	}
 	return self;
+}
+
+- (void)dealloc
+{
+	if (_isParsing)
+		[_parser abortParsing];
+	[_currentElements release];
+	[_deniedElements release];
+	[_bufferData release];
+	[_parser release];
+	[_data release];
 }
 
 - (void)doIt
@@ -42,6 +52,11 @@
 	}
 	
 	return NO;
+}
+
+- (void)parserDidStartDocument:(NSXMLParser *)parser
+{
+	_isParsing = true;
 }
 
 - (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *) namespaceURI qualifiedName:(NSString *)qName attributes: (NSDictionary *)attributeDict
@@ -84,6 +99,7 @@
 
 - (void)parserDidEndDocument:(NSXMLParser *)parser
 {
+	_isParsing = false;
 	[_delegate finishedParsing:self];
 }
 

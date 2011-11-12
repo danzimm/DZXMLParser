@@ -1,37 +1,37 @@
 //
-//  OSXMLParser.h
-//  Sector
+//  DZXMLParser.h
 //
 //  Created by Dan Zimmerman on 11/9/11.
-//  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2011 Dan Zimmerman. All rights reserved.
 //
 
-@protocol OSXMLParserDelegate;
+@protocol DZXMLParserDelegate;
 
 
-@interface OSXMLParser : NSObject <NSXMLParserDelegate> {
+@interface DZXMLParser : NSObject <NSXMLParserDelegate> {
 	NSData *_data;
 	NSXMLParser *_parser;
 	NSMutableArray *_currentElements;
 	NSMutableString *_bufferData;
+	bool _isParsing;
 	
 		//delegate things
-	id <OSXMLParserDelegate>_delegate;
+	id <DZXMLParserDelegate>_delegate;
 	NSMutableArray *_deniedElements;
 	BOOL shouldBeRecieving;
 }
 
 	//makes copy of data, dont worry
-- (id)initWithData:(NSData *)data delegate:(id<OSXMLParserDelegate>)delegate;
+- (id)initWithData:(NSData *)data delegate:(id<DZXMLParserDelegate>)delegate;
 - (void)doIt;
 
 @end
 
-@protocol OSXMLParserDelegate <NSObject>
+@protocol DZXMLParserDelegate <NSObject>
 @required
 - (BOOL)shouldReportElement:(NSString *)element;
 - (void)receievedData:(NSString *)stuff inElements:(NSArray *)elements;
-- (void)parser:(OSXMLParser *)a errorOccured:(NSError *)err;
-- (void)finishedParsing:(OSXMLParser*)a;
+- (void)parser:(DZXMLParser *)a errorOccured:(NSError *)err;
+- (void)finishedParsing:(DZXMLParser*)a;
 - (void)foundElement:(NSString *)ele withAttributes:(NSDictionary *)att;
 @end
